@@ -13,4 +13,4 @@ This will run the web app at local host, port 80.
 ## Input and output 
 1. The web app takes in two arguments in the format "YYYY-MM-DD". The first is the start date and the latter is the end date. The end date has to be within 7 days of the start date. If no end date is provided, the default end date will be 7 days from the start date. 
 2. When run succesfully, the output will be a json array of asteroids that will be approaching earth between the given dates sorted by the closest approach distance. 
-3. For example, http://127.0.0.1/get-dates?start_date=2022-12-09&end_date=2022-12-14 is valid. However, [http://127.0.0.1/get-dates?start_date=2022-12-01&end_date=2022-12-14] is not valid as the end date is not within 7 days of the start date. 
+3. For example, http://127.0.0.1/get-dates?start_date=2022-12-09&end_date=2022-12-14 is valid. However, http://127.0.0.1/get-dates?start_date=2022-12-01&end_date=2022-12-14 is not valid as the end date is not within 7 days of the start date. 
