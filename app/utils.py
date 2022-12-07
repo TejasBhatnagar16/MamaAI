@@ -1,5 +1,5 @@
 import requests 
-from datetime import date 
+import datetime 
  
  
 def main(start_date, end_date=None):
@@ -12,6 +12,12 @@ def main(start_date, end_date=None):
     :return: {str} Prompt telling the user that the date is invalid.  
     """
     url = "https://api.nasa.gov/neo/rest/v1/feed"
+    if not is_valid_date(start_date):
+        return 'Invalid Start date'
+
+    if not is_valid_date(end_date):
+        return "Invalid end date"
+
     if is_valid_end_date(start_date, end_date):
         params = {'API_KEY': "5ymTOYp1gHkK4UBagKOpxH5KtpiWADuHYrIJZHrF", 'start_date': start_date, 'end_date': end_date}
         res = requests.get(url, params=params)
@@ -69,16 +75,13 @@ def is_valid_end_date(start_date, end_date):
     """
     if end_date == None:
         return True
-        
-    if is_valid_date(start_date) and is_valid_date(end_date):
-        start_year, start_month, start_day = list(map(int, start_date.split('-')))
-        end_year, end_month, end_day = list(map(int, end_date.split('-')))
-        s_date = date(start_year, start_month, start_day)
-        e_date = date(end_year, end_month, end_day)
-        diff = (e_date - s_date).days
-        return 0 <= diff <= 7
 
-    return False
+    start_year, start_month, start_day = list(map(int, start_date.split('-')))
+    end_year, end_month, end_day = list(map(int, end_date.split('-')))
+    s_date = datetime.date(start_year, start_month, start_day)
+    e_date = datetime.date(end_year, end_month, end_day)
+    diff = (e_date - s_date).days
+    return 0 <= diff <= 7
 
 
 def is_valid_date(date):
@@ -95,6 +98,8 @@ def is_valid_date(date):
     
     year, month, day = t_list
     
-    if not (0 < int(month) <= 12 and 0 < int(day) < 31): 
-        return False 
-    return True 
+    try:
+        newDate = datetime.datetime(int(year), int(month), int(day))
+        return  True
+    except ValueError:
+        return False
