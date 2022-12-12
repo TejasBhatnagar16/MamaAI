@@ -13,33 +13,57 @@ def main(start_date, end_date=None):
     """
     url = "https://api.nasa.gov/neo/rest/v1/feed"
     if not is_valid_date(start_date):
-        return 'Invalid Start date'
+        return "Please enter the date in the form 'YYYY-MM-DD'"
 
     if not is_valid_date(end_date):
-        return "Invalid end date"
+        return "Please enter the date in the form 'YYYY-MM-DD"
 
-    if is_valid_end_date(start_date, end_date):
-        params = {'API_KEY': "5ymTOYp1gHkK4UBagKOpxH5KtpiWADuHYrIJZHrF", 'start_date': start_date, 'end_date': end_date}
-        res = requests.get(url, params=params)
-        if res.status_code != 200: 
+
+    start_year, start_month, start_day = list(map(int, start_date.split('-')))
+    end_year, end_month, end_day = list(map(int, end_date.split('-')))
+    start_date = datetime.date(start_year, start_month, start_day)
+    end_date = datetime.date(end_year, end_month, end_day)
+
+    interim_days = total_days_inbetween(start_date, end_date)
+
+    weeks, remainder_days = interim_days // 7, interim_days % 7
+
+    asteroid_list = []
+
+    temp_start_date = start_date
+    for week in range(weeks): 
+        next_date = temp_start_date + datetime.timedelta(days=(7 - week))
+        params = {'API_KEY': "5ymTOYp1gHkK4UBagKOpxH5KtpiWADuHYrIJZHrF", 'start_date': str(temp_start_date), 'end_date': str(next_date)}
+
+        temp_start_date = next_date + datetime.timedelta(days=1)
+
+        data = hit_api(url, params)
+        asteroid_list = get_obj_list(data, asteroid_list)
+
+    if remainder_days != 0:
+        params = {'API_KEY': "5ymTOYp1gHkK4UBagKOpxH5KtpiWADuHYrIJZHrF", 'start_date': str(temp_start_date), 'end_date': str(end_date)}
+
+        data = hit_api(url, params)
+        asteroid_list = get_obj_list(data, asteroid_list)
+
+    return sort_list(asteroid_list)
+
+
+def hit_api(url, params):
+    res = requests.get(url, params=params)
+    if res.status_code != 200: 
             return "Could not connect to https://api.nasa.gov/neo/rest/v1/feed"
-        data = res.json()
-
-        data = data['near_earth_objects']
-        asteroid_list = get_obj_list(data)
-        return sort_list(asteroid_list)
-    else: 
-        return 'Invalid end date'
+    data = res.json()
+    return data['near_earth_objects']
 
 
-def get_obj_list(data):
+def get_obj_list(data, obj_list):
     """
     Function to create a list of all the objects approaching earth within the given dates 
     :param data: {dict} Dictionary of the date fetched from the NASA api 
 
     :return obj_list: {list} list of all the asteroids approaching earth 
     """
-    obj_list = []
     for date in data.keys():
         obj_data = data[date]
 
@@ -65,7 +89,7 @@ def sort_list(obj_list):
     return sorted(obj_list, key=lambda x: float(x['min_dist']))
 
 
-def is_valid_end_date(start_date, end_date):
+def total_days_inbetween(start_date, end_date):
     """
     Function to check if the start and end dates are in the correct format and the end date is within the 7 day limit 
     :param start_date: {str} start date in the format "YYYY-MM-DD"
@@ -76,12 +100,8 @@ def is_valid_end_date(start_date, end_date):
     if end_date == None:
         return True
 
-    start_year, start_month, start_day = list(map(int, start_date.split('-')))
-    end_year, end_month, end_day = list(map(int, end_date.split('-')))
-    s_date = datetime.date(start_year, start_month, start_day)
-    e_date = datetime.date(end_year, end_month, end_day)
-    diff = (e_date - s_date).days
-    return 0 <= diff <= 7
+    diff = (end_date - start_date).days
+    return diff 
 
 
 def is_valid_date(date):
