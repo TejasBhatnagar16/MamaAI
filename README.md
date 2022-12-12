@@ -6,7 +6,7 @@
 
 ## Running the application 
 1. Clone this repo 
-2. Run docker `build -t ImageName` 
+2. Run `docker build -t ImageName` 
 3. Run the following command `docker run -p 80:80 ImageName/`
 This will run the web app at local host, port 80. 
 
