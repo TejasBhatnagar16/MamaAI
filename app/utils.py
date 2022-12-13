@@ -32,7 +32,7 @@ def main(start_date, end_date=None):
 
     temp_start_date = start_date
     for week in range(weeks): 
-        next_date = temp_start_date + datetime.timedelta(days=(7 - week))
+        next_date = temp_start_date + datetime.timedelta(days=(6))
         params = {'API_KEY': "5ymTOYp1gHkK4UBagKOpxH5KtpiWADuHYrIJZHrF", 'start_date': str(temp_start_date), 'end_date': str(next_date)}
 
         temp_start_date = next_date + datetime.timedelta(days=1)
