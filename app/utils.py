@@ -39,6 +39,7 @@ def main(start_date, end_date=None):
 
         data = hit_api(url, params)
         asteroid_list = get_obj_list(data, asteroid_list)
+            
 
     if remainder_days != 0:
         params = {'API_KEY': "5ymTOYp1gHkK4UBagKOpxH5KtpiWADuHYrIJZHrF", 'start_date': str(temp_start_date), 'end_date': str(end_date)}

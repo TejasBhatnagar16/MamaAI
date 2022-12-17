@@ -13,4 +13,3 @@ def get_data(*, start_date: str, end_date: str=None):
    
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=e)
-
